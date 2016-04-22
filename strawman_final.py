@@ -61,14 +61,17 @@ quiz_sparse = sp.sparse.csr_matrix(quiz, shape=None, dtype=None, copy=False)
 del data
 del quiz
 
-BoostingRF = AdaBoostClassifier(RandomForestClassifier(n_estimators=35, max_features='log2', n_jobs=-1, max_leaf_nodes = 9000, random_state = 100), n_estimators=10)
-BoostingRF.fit(data_sparse, labels)
-#scores_boosting = cross_validation.cross_val_score(BoostingRF, data_sparse, labels, cv=10)
-preds1 = BoostingRF.predict(quiz_sparse)
+RandomForest = RandomForestClassifier(n_estimators=40, max_features='log2',n_jobs=-1, 
+                                      random_state = 3, min_samples_split=2, max_leaf_nodes=8000)
+ada_rf = AdaBoostClassifier(
+    base_estimator = RandomForest,
+    n_estimators=10,
+    learning_rate=1,
+    random_state = 7)
+ada_rf.fit(data_sparse, labels)
+preds_rf = ada_rf.predict(quiz_sparse)
 
-#print(scores_boosting.mean())
-
-submission = pd.DataFrame({"Prediction": preds1})
+submission = pd.DataFrame({"Prediction": preds_rf})
 submission.index += 1
 submission.to_csv(sys.argv[3], index_label="Id")
 
