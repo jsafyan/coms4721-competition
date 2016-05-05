@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # John Elton jre2132
 # Patrick Rogan psr2125
 # Joshua Safyan jds2258
