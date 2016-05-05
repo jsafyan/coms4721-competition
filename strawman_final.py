@@ -5,6 +5,7 @@
 # COMS 4721 Machine Learning
 # Course Project
 
+# import modules
 import scipy as sp
 import numpy as np
 import pandas as pd
@@ -32,6 +33,8 @@ non_binary = list(map(str, non_binary))
 
 def dummies_and_standardize(data, test):
 
+	# create one-hot encoded variables for all categorical variables in 
+	# training and test data sets
     X = pd.get_dummies(data[data.columns[:-1]])
     test = pd.get_dummies(test)
 
@@ -45,7 +48,7 @@ def dummies_and_standardize(data, test):
 	# select and reorder the test columns using the train columns
     test = test[X.columns]
 
-	#labels
+	# create new variables for training variables 
     y = data[data.columns[-1]]
     return X, y, test
 
@@ -61,6 +64,11 @@ quiz_sparse = sp.sparse.csr_matrix(quiz, shape=None, dtype=None, copy=False)
 del data
 del quiz
 
+##############################################################
+# Train model and predict quiz dataset labels
+##############################################################
+
+# Use labeled data to train model, hyperparameters found by grid search 
 RandomForest = RandomForestClassifier(n_estimators=40, max_features='log2',n_jobs=-1, 
                                       random_state = 3, min_samples_split=2, max_leaf_nodes=8000)
 ada_rf = AdaBoostClassifier(
@@ -69,12 +77,11 @@ ada_rf = AdaBoostClassifier(
     learning_rate=1,
     random_state = 7)
 ada_rf.fit(data_sparse, labels)
+
+# Predict labels for quiz dataset
 preds_rf = ada_rf.predict(quiz_sparse)
 
+# Export quiz labels to csv
 submission = pd.DataFrame({"Prediction": preds_rf})
 submission.index += 1
 submission.to_csv(sys.argv[3], index_label="Id")
-
-
-
-
